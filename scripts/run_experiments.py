@@ -14,6 +14,9 @@ from src.utils import set_seed, f_from_points, volume_ball
 from src.integration import spherical_grid_integral_equal_m
 from src.montecarlo import mc_estimate_with_repeats
 
+D = 3           # change to 2,3,4 for experiments
+SAMPLING = 'direct'  # 'direct' or 'rejection'
+
 OUTPUT_DIR = 'outputs'
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
@@ -48,8 +51,8 @@ def run_all_experiments():
 
     # 3) Monte-Carlo experiments (standard and symmetrized)
     N_mc = [500, 1000, 2000, 5000]
-    mc_std = mc_estimate_with_repeats(f_from_points, N_mc, repeats=10, symmetrize=False)
-    mc_sym = mc_estimate_with_repeats(f_from_points, N_mc, repeats=10, symmetrize=True)
+    mc_std = mc_estimate_with_repeats(f_from_points, N_mc, repeats=10, symmetrize=False, d=D, sampling=SAMPLING)
+    mc_sym = mc_estimate_with_repeats(f_from_points, N_mc, repeats=10, symmetrize=True, d=D, sampling=SAMPLING)
 
     rows = []
     for N in N_mc:
