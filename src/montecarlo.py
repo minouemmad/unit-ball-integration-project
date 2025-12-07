@@ -69,25 +69,29 @@ def mc_standard_estimator(f_points, N, d=3, sampling='direct', rng=np.random):
 def symmetrized_estimator(f_points, N, d=3, sampling='direct', rng=np.random, max_full_sym_d=6, subset_signs=None):
     """
     For each sample x, average f over sign flips (2^d patterns).
-    For d <= max_full_sym_d, use full 2^d enumeration; for larger d, either
-    use list of sign tuples or sample a small number of random sign patterns.
-    Returns (estimate, n_evals, per_sample_avgs)
+    Defensive: verifies sampled point dimensionality matches d; if not, it
+    resets d to the sample dimension.
     """
     if sampling == 'direct':
         X = sample_uniform_ball_direct(N, d, rng=rng)
     else:
         X = sample_ball_rejection(N, d=d, rng=rng)
-    per_sample_avgs = np.zeros(N, dtype=float)
-    X = sample_ball_rejection(N)
-    per_sample_avgs = np.zeros(N)
-    
-    # decide sign patterns
+
+    if X.ndim != 2:
+        raise ValueError(f"Expected X to be 2-D array of shape (N,d); got X.ndim={X.ndim}")
+    sample_d = X.shape[1]
+    if sample_d != d:
+        print(f"Warning: requested d={d} but sampler returned points with dimension {sample_d}. "
+              f"Using sample dimension {sample_d} for symmetrization.")
+        d = sample_d
+
+    per_sample_avgs = np.zeros(X.shape[0], dtype=float)
+
     if d <= max_full_sym_d:
         signs_list = list(itertools.product([-1.0, 1.0], repeat=d))
     elif subset_signs is not None:
         signs_list = subset_signs
     else:
-        # samples a small number of random sign patterns (32) to approximate symmetrization
         k = min(32, 2 ** d)
         rng_local = rng
         signs_list = []
@@ -95,17 +99,16 @@ def symmetrized_estimator(f_points, N, d=3, sampling='direct', rng=np.random, ma
             signs_list.append(tuple(rng_local.choice([-1.0, 1.0], size=(d,)).tolist()))
 
     n_patterns = len(signs_list)
-    # iterate samples and compute average over sign flips
+
     for i, x in enumerate(X):
-        s = 0.0
-        # create stacked points for vectorized evaluation
+        # create stacked points for vectorized evaluation: shape (n_patterns, d)
         stacked = np.vstack([x * np.array(sign) for sign in signs_list])
-        vals = f_points(stacked)  # returns array of len n_patterns
+        vals = f_points(stacked)  # expects (n_patterns,) array
         per_sample_avgs[i] = np.mean(vals)
-        
+
     vol = volume_ball(1.0, d=d)
     estimate = vol * np.mean(per_sample_avgs)
-    n_evals = n_patterns * N
+    n_evals = n_patterns * X.shape[0]
     return estimate, n_evals, per_sample_avgs
 
 def mc_estimate_with_repeats(f_points, N_list, repeats=10, symmetrize=False, d=3, sampling='direct', rng=np.random):

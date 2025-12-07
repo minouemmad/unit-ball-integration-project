@@ -45,3 +45,18 @@ def spherical_to_cartesian(r, theta, phi):
     y = r * np.cos(theta) * np.sin(phi)
     z = r * np.sin(theta)
     return x, y, z
+
+def f_radial_norm2(X):
+    """
+    Vectorized integrand f(x) = ||x||^2 for X of shape (N, d).
+    """
+    X = np.asarray(X)
+    norms2 = np.sum(X**2, axis=1)
+    return norms2
+
+def analytic_integral_radial_norm2(d):
+    """
+    Analytic integral of f(x) = ||x||^2 over the unit d-ball.
+    """
+    vol = (pi ** (d / 2.0)) / gamma(d / 2.0 + 1.0)
+    return vol * (d / (d + 2.0))
