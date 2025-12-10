@@ -1,7 +1,4 @@
-"""
-Helpers used by both deterministic and Monte-Carlo implementations.
-For tasks 1..5.
-"""
+# src/utils.py
 import numpy as np
 from math import pi
 from math import pi, gamma

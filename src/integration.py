@@ -1,7 +1,4 @@
-"""
-Task 2 (nested 1-D integration) & 4 (use as a reference "true" integral by using large m)
-
-"""
+# src/integration.py
 import numpy as np
 from .utils import spherical_to_cartesian
 

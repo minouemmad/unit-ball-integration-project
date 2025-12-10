@@ -1,8 +1,4 @@
-"""
-Runs MC experiments for d=2,3,4 and sampling modes.
-Produces CSVs and PNGs per (d, sampling) and prints summary.
-"""
-
+#scripts/run_experiments.py
 import os
 import numpy as np
 import pandas as pd

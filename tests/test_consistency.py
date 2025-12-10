@@ -1,9 +1,4 @@
-"""
-Small tests to check core invariants:
- - Monte-Carlo estimator unbiasedness by averaging many repeats and comparing to deterministic reference
- - Symmetry exactness on a linear function
-"""
-
+# tests/test_consistency.py
 import numpy as np
 from src.utils import set_seed
 from src.montecarlo import mc_standard_estimator, symmetrized_estimator

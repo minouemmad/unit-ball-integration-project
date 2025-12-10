@@ -1,10 +1,4 @@
-"""
-Monte-Carlo sampling and estimators for integration over the unit ball.
-
-Task 1 (unbiasedness, variance formulas implemented numerically),
-Task 3 (rejection sampling), Task 4 (error vs N), Task 5 (symmetrized estimator)
-
-"""
+#src/montecarlo.py
 import numpy as np
 import itertools
 from math import pi
